@@ -1,0 +1,209 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────────────────────────────
+// Auth
+// ───────────────────────────────────────────────
+
+model Admin {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Homepage content
+// ───────────────────────────────────────────────
+
+model Banner {
+  id        String   @id @default(uuid())
+  eyebrow   String
+  headline  String
+  subtext   String?
+  image     String?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Program {
+  id          String   @id @default(uuid())
+  type        String // corporate | college | flagship
+  title       String
+  description String
+  image       String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProgramTrack {
+  id            String   @id @default(uuid())
+  code          String // ACP | SDP | CCP
+  name          String
+  idealFor      String
+  duration      String
+  internship    String?
+  certification String
+  description   String
+  fee           Int
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model WhyIxsPoint {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ImpactCounter {
+  id        String   @id @default(uuid())
+  label     String
+  value     Int
+  suffix    String? // e.g. "+"
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// People
+// ───────────────────────────────────────────────
+
+model Faculty {
+  id        String   @id @default(uuid())
+  name      String
+  subject   String?
+  type      String // permanent | empanelled
+  photo     String?
+  linkedin  String?
+  status    String   @default("active") // active | inactive
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AdvisoryMember {
+  id        String   @id @default(uuid())
+  name      String
+  org       String?
+  photo     String?
+  linkedin  String?
+  status    String   @default("active")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LeadershipMember {
+  id        String   @id @default(uuid())
+  name      String
+  role      String
+  bio       String?
+  photo     String?
+  linkedin  String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Social proof
+// ───────────────────────────────────────────────
+
+model Partner {
+  id        String   @id @default(uuid())
+  name      String
+  logo      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  name      String
+  company   String
+  batch     String?
+  quote     String
+  photo     String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Podcast {
+  id          String   @id @default(uuid())
+  title       String
+  guest       String?
+  description String?
+  thumbnail   String?
+  link        String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Accreditation {
+  id        String   @id @default(uuid())
+  name      String
+  logo      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GalleryPhoto {
+  id        String   @id @default(uuid())
+  caption   String?
+  image     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Form submissions
+// ───────────────────────────────────────────────
+
+model Enquiry {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  program   String?
+  role      String?
+  message   String?
+  status    String   @default("new") // new | contacted | closed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Partnership {
+  id        String   @id @default(uuid())
+  company   String
+  sector    String?
+  contact   String
+  email     String
+  phone     String?
+  interests String[] // e.g. ["Hiring our graduates", "Guest faculty / mentorship"]
+  message   String?
+  status    String   @default("new") // new | contacted | closed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

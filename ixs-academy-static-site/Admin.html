@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>IXS Academy — Admin</title>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,600&family=Work+Sans:wght@400;500;600;700&display=swap">
+<style>
+  body{margin:0;background:#F7F9FC;font-family:"Work Sans",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;color:var(--ink);}
+  .serif{font-family:"Newsreader",Georgia,serif}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  .navitem{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:7px;font-size:13.5px;color:rgba(255,255,255,.78);border:none;background:none;width:100%;text-align:left;}
+  .navitem:hover{background:rgba(255,255,255,.08);color:#fff;}
+  .navitem-active{background:rgba(255,255,255,.14);color:#ffffff;font-weight:600;}
+  .navgroup-label{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:18px 14px 6px;}
+  .stat-card{background:#fff;border:1px solid #E5EAF2;border-radius:10px;padding:18px 20px;}
+  .btn-primary{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;padding:9px 16px;border-radius:6px;border:none;}
+  .btn-primary:hover{background:var(--accent-dk)}
+  .table{width:100%;border-collapse:collapse;font-size:13px;}
+  .table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#7A8699;padding:10px 14px;border-bottom:1px solid #E5EAF2;}
+  .table td{padding:10px 14px;border-bottom:1px solid #EEF1F6;vertical-align:middle;}
+  .badge{display:inline-flex;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;}
+  .search-input{border:1px solid #DCE3EE;border-radius:7px;padding:9px 12px 9px 34px;font-size:13px;width:220px;}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:#D2DAE6;border-radius:999px;}
+</style>
+<div style="width:100%;min-height:100vh;box-sizing:border-box;--accent:#0487E2;--accent-dk:#0463CA;--panel:#0463CA;--ink:#101828;--ink-soft:#57606E;display:flex;">
+
+  <!-- SIDEBAR -->
+  <aside style="width:250px;flex:none;background:var(--panel);min-height:100vh;display:flex;flex-direction:column;padding:20px 12px;box-sizing:border-box;position:sticky;top:0;align-self:flex-start;max-height:100vh;overflow-y:auto;">
+    <div style="display:flex;align-items:baseline;gap:7px;padding:8px 12px 20px;">
+      <span class="serif" style="font-size:20px;font-weight:600;color:#ffffff;">IXS</span>
+      <span style="font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.7);font-weight:600;">ADMIN</span>
+    </div>
+
+    <button id="nav-dashboard" onclick="navigateTo('dashboard')" class="navitem navitem-active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>
+      Dashboard
+    </button>
+
+    <button id="nav-enquiries" onclick="navigateTo('enquiries')" class="navitem" style="justify-content:space-between;">
+      <span style="display:flex;align-items:center;gap:10px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13a2 2 0 0 1-2 2H8l-4 3V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><line x1="8" y1="9" x2="16" y2="9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="8" y1="13" x2="13" y2="13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Enquiries
+      </span>
+      <span style="background:#F97316;color:#fff;font-size:10px;font-weight:700;border-radius:999px;padding:2px 7px;">6</span>
+    </button>
+
+    <button onclick="toggleSettings()" class="navitem" style="justify-content:space-between;margin-top:6px;">
+      <span style="display:flex;align-items:center;gap:10px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.35a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.65 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.65a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.35 9a1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1.04Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        CMS Settings
+      </span>
+      <svg id="settings-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" style="transform:rotate(0deg);transition:transform .15s;"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <div id="settings-panel" style="display:flex;flex-direction:column;padding-left:8px;border-left:1px solid rgba(255,255,255,.14);margin-left:20px;">
+        <button id="nav-banners" onclick="navigateTo('banners')" class="navitem">Hero Banners</button>
+        <button id="nav-gallery" onclick="navigateTo('gallery')" class="navitem">About Us Gallery</button>
+        <a href="#" class="navitem">Our Programs</a>
+        <button id="nav-tracks" onclick="navigateTo('tracks')" class="navitem">Program Tracks (ACP/SDP/CCP)</button>
+        <a href="#" class="navitem">Why IXS (USPs)</a>
+        <button id="nav-counters" onclick="navigateTo('counters')" class="navitem">Impact Counters</button>
+        <a href="#" class="navitem">Flagship Program</a>
+        <a href="#" class="navitem">Campus Curriculum</a>
+        <a href="#" class="navitem">Leadership Team</a>
+        <button id="nav-advisory" onclick="navigateTo('advisory')" class="navitem">Advisory Board</button>
+        <button id="nav-faculty" onclick="navigateTo('faculty')" class="navitem">Faculty (Empanelled)</button>
+        <a href="#" class="navitem">Industry Partners</a>
+        <a href="#" class="navitem">Testimonials &amp; Placements</a>
+        <a href="#" class="navitem">Podcasts</a>
+        <a href="#" class="navitem">Accreditations</a>
+        <a href="#" class="navitem">Footer &amp; Site Settings</a>
+      </div>
+
+    <div style="margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);">
+      <a href="Main.html" class="navitem">&larr; View Website</a>
+      <a href="#" class="navitem" onclick="handleLogout(event)">Log Out</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div style="flex:1;min-width:0;">
+    <header style="background:#ffffff;border-bottom:1px solid #E5EAF2;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;">
+      <div id="page-title" style="font-weight:700;font-size:18px;">Dashboard</div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div id="admin-avatar" style="width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">A</div>
+        <div id="admin-name" style="font-size:13px;font-weight:600;">Admin</div>
+      </div>
+    </header>
+
+    <div style="padding:28px 32px;">
+
+      <div id="view-dashboard">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;">
+          <div class="stat-card"><div style="font-size:12px;color:var(--ink-soft);">Students Trained</div><div class="serif" style="font-size:28px;font-weight:600;margin-top:4px;">100</div></div>
+          <div class="stat-card"><div style="font-size:12px;color:var(--ink-soft);">Students Placed</div><div class="serif" style="font-size:28px;font-weight:600;margin-top:4px;">90</div></div>
+          <div class="stat-card"><div style="font-size:12px;color:var(--ink-soft);">Corporate Partners</div><div class="serif" style="font-size:28px;font-weight:600;margin-top:4px;">12</div></div>
+          <div class="stat-card"><div style="font-size:12px;color:var(--ink-soft);">MOUs with Colleges</div><div class="serif" style="font-size:28px;font-weight:600;margin-top:4px;">12</div></div>
+        </div>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:12px;">Content masters</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+          <div class="stat-card" style="display:flex;flex-direction:column;gap:6px;"><div style="font-size:12.5px;color:var(--ink-soft);">Leadership Team</div><div style="font-size:20px;font-weight:700;">4 <span style="font-size:11px;font-weight:400;color:var(--ink-soft);">entries</span></div></div>
+          <button onclick="navigateTo('advisory')" class="stat-card" style="display:flex;flex-direction:column;gap:6px;text-align:left;border-color:var(--accent);">
+            <div style="font-size:12.5px;color:var(--ink-soft);">Advisory Board</div><div style="font-size:20px;font-weight:700;color:var(--accent);">12 <span style="font-size:11px;font-weight:400;color:var(--ink-soft);">entries &rarr;</span></div>
+          </button>
+          <button onclick="navigateTo('faculty')" class="stat-card" style="display:flex;flex-direction:column;gap:6px;text-align:left;border-color:var(--accent);">
+            <div style="font-size:12.5px;color:var(--ink-soft);">Faculty (Empanelled)</div><div style="font-size:20px;font-weight:700;color:var(--accent);">24 <span style="font-size:11px;font-weight:400;color:var(--ink-soft);">entries &rarr;</span></div>
+          </button>
+          <div class="stat-card" style="display:flex;flex-direction:column;gap:6px;"><div style="font-size:12.5px;color:var(--ink-soft);">Testimonials</div><div style="font-size:20px;font-weight:700;">6 <span style="font-size:11px;font-weight:400;color:var(--ink-soft);">entries</span></div></div>
+          <div class="stat-card" style="display:flex;flex-direction:column;gap:6px;"><div style="font-size:12.5px;color:var(--ink-soft);">Industry Partners</div><div style="font-size:20px;font-weight:700;">8 <span style="font-size:11px;font-weight:400;color:var(--ink-soft);">logos</span></div></div>
+          <div class="stat-card" style="display:flex;flex-direction:column;gap:6px;"><div style="font-size:12.5px;color:var(--ink-soft);">Podcast Episodes</div><div style="font-size:20px;font-weight:700;">3 <span style="font-size:11px;font-weight:400;color:var(--ink-soft);">entries</span></div></div>
+          <div class="stat-card" style="display:flex;flex-direction:column;gap:6px;"><div style="font-size:12.5px;color:var(--ink-soft);">Program Tracks</div><div style="font-size:20px;font-weight:700;">3 <span style="font-size:11px;font-weight:400;color:var(--ink-soft);">(ACP/SDP/CCP)</span></div></div>
+          <button onclick="navigateTo('banners')" class="stat-card" style="display:flex;flex-direction:column;gap:6px;text-align:left;border-color:var(--accent);"><div style="font-size:12.5px;color:var(--ink-soft);">Hero Banners</div><div style="font-size:20px;font-weight:700;color:var(--accent);">4 <span style="font-size:11px;font-weight:400;color:var(--ink-soft);">slides &rarr;</span></div></button>
+        </div>
+
+        <p style="margin:24px 0 0;font-size:12.5px;color:var(--ink-soft);max-width:640px;line-height:1.6;">This is a design mockup of the admin panel. Click into <strong>Advisory Board</strong> or <strong>Faculty</strong> above to see the scalable list view — the pattern every other content master (Leadership, Testimonials, Partners, Podcasts, etc.) will follow once built.</p>
+      </div>
+
+      <div id="view-faculty" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div style="position:relative;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#9AA6B8;"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><line x1="21" y1="21" x2="16.2" y2="16.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input class="search-input" type="search" placeholder="Search faculty">
+          </div>
+          <button class="btn-primary">+ Add Faculty</button>
+        </div>
+        <div class="stat-card" style="padding:0;overflow:hidden;">
+          <table class="table">
+            <tr><th>Photo</th><th>Name</th><th>Subject / Specialisation</th><th>Type</th><th>LinkedIn</th><th>Status</th><th></th></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">Sachin</td><td>[Subject / Specialisation]</td><td><span class="badge" style="background:#E8F1FC;color:var(--accent-dk);">Empanelled</span></td><td><a href="#" style="color:#0A66C2;font-weight:600;font-size:12px;">View &#8599;</a></td><td><span class="badge" style="background:#E8F8EE;color:#16794D;">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">[Faculty Name]</td><td>[Subject / Specialisation]</td><td><span class="badge" style="background:#F1EAFB;color:#6B3FA0;">Permanent</span></td><td><span style="color:#B7BFCC;font-size:12px;">Not added</span></td><td><span class="badge" style="background:#E8F8EE;color:#16794D;">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">[Faculty Name]</td><td>[Subject / Specialisation]</td><td><span class="badge" style="background:#E8F1FC;color:var(--accent-dk);">Empanelled</span></td><td><a href="#" style="color:#0A66C2;font-weight:600;font-size:12px;">View &#8599;</a></td><td><span class="badge" style="background:#E8F8EE;color:#16794D;">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">[Faculty Name]</td><td>[Subject / Specialisation]</td><td><span class="badge" style="background:#F1EAFB;color:#6B3FA0;">Permanent</span></td><td><span style="color:#B7BFCC;font-size:12px;">Not added</span></td><td><span class="badge" style="background:#FBEEE8;color:#B5490D;">Inactive</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">[Faculty Name]</td><td>[Subject / Specialisation]</td><td><span class="badge" style="background:#E8F1FC;color:var(--accent-dk);">Empanelled</span></td><td><a href="#" style="color:#0A66C2;font-weight:600;font-size:12px;">View &#8599;</a></td><td><span class="badge" style="background:#E8F8EE;color:#16794D;">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+          </table>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:12px;color:var(--ink-soft);">
+            <span>Showing 1–5 of 24</span>
+            <div style="display:flex;gap:6px;">
+              <button style="border:1px solid #DCE3EE;background:#fff;border-radius:5px;padding:5px 10px;">Prev</button>
+              <button style="border:1px solid #DCE3EE;background:#fff;border-radius:5px;padding:5px 10px;">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-advisory" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div style="position:relative;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#9AA6B8;"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><line x1="21" y1="21" x2="16.2" y2="16.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input class="search-input" type="search" placeholder="Search advisory board">
+          </div>
+          <button class="btn-primary">+ Add Advisory Member</button>
+        </div>
+        <div class="stat-card" style="padding:0;overflow:hidden;">
+          <table class="table">
+            <tr><th>Photo</th><th>Name</th><th>Industry / Organisation</th><th>LinkedIn</th><th>Status</th><th></th></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">[Advisory Member]</td><td>[Industry, Organisation]</td><td><a href="#" style="color:#0A66C2;font-weight:600;font-size:12px;">View &#8599;</a></td><td><span class="badge" style="background:#E8F8EE;color:#16794D;">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">[Advisory Member]</td><td>[Industry, Organisation]</td><td><span style="color:#B7BFCC;font-size:12px;">Not added</span></td><td><span class="badge" style="background:#E8F8EE;color:#16794D;">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">[Advisory Member]</td><td>[Industry, Organisation]</td><td><a href="#" style="color:#0A66C2;font-weight:600;font-size:12px;">View &#8599;</a></td><td><span class="badge" style="background:#E8F8EE;color:#16794D;">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">[Advisory Member]</td><td>[Industry, Organisation]</td><td><span style="color:#B7BFCC;font-size:12px;">Not added</span></td><td><span class="badge" style="background:#FBEEE8;color:#B5490D;">Inactive</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+            <tr><td><div style="width:32px;height:32px;border-radius:50%;background:#E5EEF8;"></div></td><td style="font-weight:600;">[Advisory Member]</td><td>[Industry, Organisation]</td><td><a href="#" style="color:#0A66C2;font-weight:600;font-size:12px;">View &#8599;</a></td><td><span class="badge" style="background:#E8F8EE;color:#16794D;">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td></tr>
+          </table>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:12px;color:var(--ink-soft);">
+            <span>Showing 1–5 of 12</span>
+            <div style="display:flex;gap:6px;">
+              <button style="border:1px solid #DCE3EE;background:#fff;border-radius:5px;padding:5px 10px;">Prev</button>
+              <button style="border:1px solid #DCE3EE;background:#fff;border-radius:5px;padding:5px 10px;">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-counters" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+          <div class="stat-card">
+            <div style="font-weight:700;font-size:14px;margin-bottom:16px;">Edit impact counters</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;" for="c-students">Students Trained</label>
+                <input id="c-students" class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" value="100" oninput="updateCounterPreview('c-students')">
+              </div>
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;" for="c-placed">Students Placed</label>
+                <input id="c-placed" class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" value="90" oninput="updateCounterPreview('c-placed')">
+              </div>
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;" for="c-faculty">Faculty</label>
+                <input id="c-faculty" class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" value="20" oninput="updateCounterPreview('c-faculty')">
+              </div>
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;" for="c-campus">Training Campus</label>
+                <input id="c-campus" class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" value="1" oninput="updateCounterPreview('c-campus')">
+              </div>
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;" for="c-partners">Corporate Partners</label>
+                <input id="c-partners" class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" value="12" oninput="updateCounterPreview('c-partners')">
+              </div>
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;" for="c-mous">MOUs with Colleges</label>
+                <input id="c-mous" class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" value="12" oninput="updateCounterPreview('c-mous')">
+              </div>
+            </div>
+            <button id="save-counters-btn" onclick="saveCounters()" class="btn-primary" style="margin-top:18px;">Save Changes</button>
+            <div id="confirm-counters" style="display:none;">
+              <div style="margin-top:10px;font-size:12.5px;color:#16794D;font-weight:600;">&#10003; Saved — this is what visitors will see on the public site.</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:10px;">Live preview</div>
+            <div style="background:var(--accent);border-radius:10px;padding:22px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px 8px;">
+              <div style="text-align:center;"><div id="preview-students" class="serif" style="font-size:22px;font-weight:700;color:#fff;">100</div><div style="font-size:10.5px;color:rgba(255,255,255,.8);margin-top:2px;">Students Trained</div></div>
+              <div style="text-align:center;"><div id="preview-placed" class="serif" style="font-size:22px;font-weight:700;color:#fff;">90</div><div style="font-size:10.5px;color:rgba(255,255,255,.8);margin-top:2px;">Students Placed</div></div>
+              <div style="text-align:center;"><div id="preview-faculty" class="serif" style="font-size:22px;font-weight:700;color:#fff;">20</div><div style="font-size:10.5px;color:rgba(255,255,255,.8);margin-top:2px;">Faculty</div></div>
+              <div style="text-align:center;"><div id="preview-campus" class="serif" style="font-size:22px;font-weight:700;color:#fff;">1</div><div style="font-size:10.5px;color:rgba(255,255,255,.8);margin-top:2px;">Training Campus</div></div>
+              <div style="text-align:center;"><div id="preview-partners" class="serif" style="font-size:22px;font-weight:700;color:#fff;">12</div><div style="font-size:10.5px;color:rgba(255,255,255,.8);margin-top:2px;">Corporate Partners</div></div>
+              <div style="text-align:center;"><div id="preview-mous" class="serif" style="font-size:22px;font-weight:700;color:#fff;">12</div><div style="font-size:10.5px;color:rgba(255,255,255,.8);margin-top:2px;">MOUs with Colleges</div></div>
+            </div>
+            <p style="font-size:12px;color:var(--ink-soft);margin-top:10px;line-height:1.5;">This mirrors the sky-blue "Counts" band shown on the public website, just above the Why IXS section. Edit a field on the left to see it update here.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-tracks" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+          <div class="stat-card">
+            <div style="font-weight:700;font-size:14px;margin-bottom:16px;">Edit program fees</div>
+            <div style="display:flex;flex-direction:column;gap:18px;">
+
+              <div>
+                <label style="font-size:12px;font-weight:700;color:#0487E2;display:block;margin-bottom:6px;">ACP &middot; Automation Certification Program</label>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="font-size:13.5px;color:var(--ink-soft);">&#8377;</span>
+                  <input id="fee-acp" class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" value="15,000" oninput="updateFeePreview('acp')">
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size:12px;font-weight:700;color:#F97316;display:block;margin-bottom:6px;">SDP &middot; Skill Development Program</label>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="font-size:13.5px;color:var(--ink-soft);">&#8377;</span>
+                  <input id="fee-sdp" class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" value="20,000" oninput="updateFeePreview('sdp')">
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size:12px;font-weight:700;color:#16A34A;display:block;margin-bottom:6px;">CCP &middot; Company Certified Program</label>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="font-size:13.5px;color:var(--ink-soft);">&#8377;</span>
+                  <input id="fee-ccp" class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" value="30,000" oninput="updateFeePreview('ccp')">
+                </div>
+              </div>
+
+            </div>
+            <button id="save-tracks-btn" onclick="saveFees()" class="btn-primary" style="margin-top:20px;">Save Changes</button>
+            <div id="confirm-tracks" style="display:none;">
+              <div style="margin-top:10px;font-size:12.5px;color:#16794D;font-weight:600;">&#10003; Saved — this is what visitors will see on the public site.</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:10px;">Live preview</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="border-radius:8px;overflow:hidden;border:1px solid #E5EAF2;">
+                <div style="padding:12px 16px;font-size:12.5px;font-weight:600;">ACP &middot; Automation Certification Program</div>
+                <div style="background:#0487E2;padding:14px 16px;color:#fff;font-weight:700;font-size:18px;">&#8377;<span id="fee-preview-acp">15,000</span></div>
+              </div>
+              <div style="border-radius:8px;overflow:hidden;border:1px solid #E5EAF2;">
+                <div style="padding:12px 16px;font-size:12.5px;font-weight:600;">SDP &middot; Skill Development Program</div>
+                <div style="background:#F97316;padding:14px 16px;color:#fff;font-weight:700;font-size:18px;">&#8377;<span id="fee-preview-sdp">20,000</span></div>
+              </div>
+              <div style="border-radius:8px;overflow:hidden;border:1px solid #E5EAF2;">
+                <div style="padding:12px 16px;font-size:12.5px;font-weight:600;">CCP &middot; Company Certified Program</div>
+                <div style="background:#16A34A;padding:14px 16px;color:#fff;font-weight:700;font-size:18px;">&#8377;<span id="fee-preview-ccp">30,000</span></div>
+              </div>
+            </div>
+            <p style="font-size:12px;color:var(--ink-soft);margin-top:10px;line-height:1.5;">Mirrors the colored price band on each program card in "Choose your training track."</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-banners" style="display:none;">
+        <div style="font-weight:700;font-size:14px;margin-bottom:12px;">Existing slides (<span id="banners-count">0</span>)</div>
+        <div class="stat-card" style="padding:0;overflow:hidden;margin-bottom:28px;">
+          <table class="table" id="banners-table">
+            <tr><th>Order</th><th>Eyebrow</th><th>Headline</th><th>Status</th><th></th></tr>
+            <tr id="banners-loading-row"><td colspan="5" style="color:var(--ink-soft);">Loading…</td></tr>
+          </table>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+          <div class="stat-card">
+            <div style="font-weight:700;font-size:14px;margin-bottom:16px;">Add a new banner slide</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;" for="b-eyebrow">Eyebrow tag</label>
+                <input id="b-eyebrow" class="search-input" style="width:100%;padding:9px 12px;" type="text" placeholder="e.g. For Enterprises" value="" oninput="updateBannerPreview()">
+              </div>
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;" for="b-headline">Headline</label>
+                <input id="b-headline" class="search-input" style="width:100%;padding:9px 12px;" type="text" placeholder="e.g. Upskill your workforce, on your timeline." value="" oninput="updateBannerPreview()">
+              </div>
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;" for="b-subtext">Subtext</label>
+                <input id="b-subtext" class="search-input" style="width:100%;padding:9px 12px;" type="text" placeholder="One short supporting line" value="" oninput="updateBannerPreview()">
+              </div>
+              <div>
+                <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;">Banner image</label>
+                <div style="border:1.5px dashed #CBD5E1;border-radius:7px;padding:18px;text-align:center;font-size:12px;color:var(--ink-soft);">Drag &amp; drop an image, or click to upload<br><span style="font-size:11px;">Recommended 1440&times;600px</span></div>
+              </div>
+            </div>
+            <button id="save-banner-btn" onclick="addBanner()" class="btn-primary" style="margin-top:18px;">+ Add Slide</button>
+            <div id="confirm-banners" style="display:none;">
+              <div style="margin-top:10px;font-size:12.5px;color:#16794D;font-weight:600;">&#10003; Slide added — it will appear in the homepage carousel rotation.</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:10px;">Live preview</div>
+            <div style="background:var(--accent);border-radius:10px;padding:26px 22px;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:8px;">
+              <span id="banner-preview-eyebrow" style="display:inline-flex;align-self:flex-start;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.85);"></span>
+              <div id="banner-preview-headline" class="serif" style="font-size:20px;font-weight:600;color:#fff;line-height:1.25;">Your headline will appear here</div>
+              <div id="banner-preview-subtext" style="font-size:12px;color:rgba(255,255,255,.78);"></div>
+            </div>
+            <p style="font-size:12px;color:var(--ink-soft);margin-top:10px;line-height:1.5;">Mirrors one slide of the rotating hero banner on the homepage.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-gallery" style="display:none;">
+        <p style="margin:0 0 20px;font-size:12.5px;color:var(--ink-soft);max-width:640px;line-height:1.6;">Controls the scrollable photo gallery on the "Introduction to IXS Academy" section — MOU signings, group photos, classroom sessions and more. Drag to reorder; visitors scroll through them in this order.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+          <div class="stat-card" style="padding:0;overflow:hidden;">
+            <div style="aspect-ratio:4/3;background:#E5EEF8;display:flex;align-items:center;justify-content:center;position:relative;">
+              <span style="position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;border-radius:5px;padding:2px 7px;">1</span>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="5" stroke="var(--accent)" stroke-width="1.6"/><path d="M4 20c1.6-4.2 5-6 8-6s6.4 1.8 8 6" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <div style="padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:12px;font-weight:600;">Team &amp; Partners</span>
+              <a href="#" style="color:var(--accent);font-size:11.5px;font-weight:600;">Edit</a>
+            </div>
+          </div>
+          <div class="stat-card" style="padding:0;overflow:hidden;">
+            <div style="aspect-ratio:4/3;background:#E5EEF8;display:flex;align-items:center;justify-content:center;position:relative;">
+              <span style="position:absolute;top:8px;left:8px;background:#B7BFCC;color:#fff;font-size:10px;font-weight:700;border-radius:5px;padding:2px 7px;">2</span>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 17V7l8-4 8 4v10" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 21v-6h6v6" stroke="var(--accent)" stroke-width="1.5"/><path d="M4 21h16" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div style="padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:12px;font-weight:600;color:var(--ink-soft);">[Photo pending]</span>
+              <a href="#" style="color:var(--accent);font-size:11.5px;font-weight:600;">Edit</a>
+            </div>
+          </div>
+          <div class="stat-card" style="padding:0;overflow:hidden;">
+            <div style="aspect-ratio:4/3;background:#E5EEF8;display:flex;align-items:center;justify-content:center;position:relative;">
+              <span style="position:absolute;top:8px;left:8px;background:#B7BFCC;color:#fff;font-size:10px;font-weight:700;border-radius:5px;padding:2px 7px;">3</span>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="12" rx="1.5" stroke="var(--accent)" stroke-width="1.5"/><path d="M8 20h8M12 16v4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/><path d="M7 10l3-3 2.5 2.5L17 5" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:12px;font-weight:600;color:var(--ink-soft);">[Photo pending]</span>
+              <a href="#" style="color:var(--accent);font-size:11.5px;font-weight:600;">Edit</a>
+            </div>
+          </div>
+          <button style="border:1.5px dashed #CBD5E1;border-radius:10px;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;aspect-ratio:4/3;color:var(--ink-soft);cursor:pointer;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/></svg>
+            <span style="font-size:12px;font-weight:600;">Add Photo</span>
+          </button>
+        </div>
+
+        <div class="stat-card">
+          <div style="font-weight:700;font-size:13.5px;margin-bottom:14px;">Add a new gallery photo</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+            <div>
+              <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;">Caption</label>
+              <input class="search-input" style="width:100%;padding:9px 12px;" type="text" placeholder="e.g. MOU Signing — IC Pro">
+            </div>
+            <div>
+              <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:5px;">Display order</label>
+              <input class="search-input" style="width:100%;padding:9px 12px;" type="text" inputmode="numeric" placeholder="4">
+            </div>
+          </div>
+          <div style="border:1.5px dashed #CBD5E1;border-radius:7px;padding:18px;text-align:center;font-size:12px;color:var(--ink-soft);margin-bottom:14px;">Drag &amp; drop an image, or click to upload<br><span style="font-size:11px;">Recommended 4:3, e.g. 1200&times;900px</span></div>
+          <button class="btn-primary">+ Add to Gallery</button>
+        </div>
+      </div>
+
+      <div id="view-enquiries" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div style="position:relative;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#9AA6B8;"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><line x1="21" y1="21" x2="16.2" y2="16.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input id="enquiries-search" class="search-input" type="search" placeholder="Search enquiries" oninput="loadEnquiries()">
+          </div>
+          <select id="enquiries-status-filter" class="search-input" style="width:150px;padding:9px 12px;" onchange="loadEnquiries()">
+            <option value="all">All statuses</option>
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div class="stat-card" style="padding:0;overflow:hidden;">
+          <table class="table" id="enquiries-table">
+            <tr><th>Name</th><th>Contact</th><th>Program</th><th>I am a</th><th>Date</th><th>Status</th><th></th></tr>
+            <tr id="enquiries-loading-row"><td colspan="7" style="color:var(--ink-soft);">Loading…</td></tr>
+          </table>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:12px;color:var(--ink-soft);">
+            <span id="enquiries-count-label">Showing 0 of 0</span>
+            <div style="display:flex;gap:6px;">
+              <button style="border:1px solid #DCE3EE;background:#fff;border-radius:5px;padding:5px 10px;">Prev</button>
+              <button style="border:1px solid #DCE3EE;background:#fff;border-radius:5px;padding:5px 10px;">Next</button>
+            </div>
+          </div>
+        </div>
+        <p style="margin:16px 0 0;font-size:12.5px;color:var(--ink-soft);max-width:640px;line-height:1.6;">Submissions from the "Enquire Now" form on the public website land here in real time.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="./config.js"></script>
+<script>
+  var VIEWS = ['dashboard', 'faculty', 'advisory', 'counters', 'tracks', 'banners', 'gallery', 'enquiries'];
+  var TITLES = {
+    dashboard: 'Dashboard',
+    faculty: 'Faculty (Empanelled)',
+    advisory: 'Advisory Board',
+    counters: 'Impact Counters',
+    tracks: 'Program Tracks (ACP/SDP/CCP)',
+    banners: 'Hero Banners',
+    gallery: 'About Us Gallery',
+    enquiries: 'Enquiries'
+  };
+
+  function navigateTo(view) {
+    VIEWS.forEach(function (name) {
+      var panel = document.getElementById('view-' + name);
+      var nav = document.getElementById('nav-' + name);
+      var isActive = name === view;
+      if (panel) panel.style.display = isActive ? '' : 'none';
+      if (nav) nav.classList.toggle('navitem-active', isActive);
+    });
+    var title = document.getElementById('page-title');
+    if (title) title.textContent = TITLES[view] || 'Dashboard';
+  }
+
+  function toggleSettings() {
+    var panel = document.getElementById('settings-panel');
+    var chevron = document.getElementById('settings-chevron');
+    var isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : '';
+    chevron.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+  }
+
+  // Generic "Save Changes" confirmation message: show it, and hide again
+  // the next time any field in that form changes (handled by each
+  // update*Preview function below calling hideConfirm).
+  function showConfirm(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = '';
+  }
+  function hideConfirm(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  }
+
+  // ---- Impact Counters: live preview ----
+  var COUNTER_FIELD_TO_PREVIEW = {
+    'c-students': 'preview-students',
+    'c-placed': 'preview-placed',
+    'c-faculty': 'preview-faculty',
+    'c-campus': 'preview-campus',
+    'c-partners': 'preview-partners',
+    'c-mous': 'preview-mous'
+  };
+  function updateCounterPreview(fieldId) {
+    var input = document.getElementById(fieldId);
+    var previewId = COUNTER_FIELD_TO_PREVIEW[fieldId];
+    var preview = document.getElementById(previewId);
+    if (input && preview) preview.textContent = input.value;
+    hideConfirm('confirm-counters');
+  }
+
+  // ---- Program Tracks: live fee preview ----
+  function updateFeePreview(code) {
+    var input = document.getElementById('fee-' + code);
+    var preview = document.getElementById('fee-preview-' + code);
+    if (input && preview) preview.textContent = input.value;
+    hideConfirm('confirm-tracks');
+  }
+
+  // ---- Hero Banners: live preview ----
+  function updateBannerPreview() {
+    var eyebrow = document.getElementById('b-eyebrow').value;
+    var headline = document.getElementById('b-headline').value;
+    var subtext = document.getElementById('b-subtext').value;
+    document.getElementById('banner-preview-eyebrow').textContent = eyebrow;
+    document.getElementById('banner-preview-headline').textContent = headline || 'Your headline will appear here';
+    document.getElementById('banner-preview-subtext').textContent = subtext;
+    hideConfirm('confirm-banners');
+  }
+
+  // =========================================================
+  // Backend wiring — auth, and real data for Counters, Tracks,
+  // Banners and Enquiries (the four screens that have working
+  // CRUD endpoints on the API — see the technical handoff doc
+  // for the rest).
+  // =========================================================
+
+  function getToken() {
+    return localStorage.getItem('ixs_admin_token');
+  }
+
+  function handleLogout(e) {
+    if (e) e.preventDefault();
+    localStorage.removeItem('ixs_admin_token');
+    localStorage.removeItem('ixs_admin_name');
+    window.location.href = 'Login.html';
+  }
+
+  // Wrapper around fetch() that adds the API base URL and the admin's
+  // auth token, and sends you back to the login page if the token has
+  // expired or was never set.
+  async function apiFetch(path, options) {
+    options = options || {};
+    options.headers = Object.assign(
+      { 'Content-Type': 'application/json' },
+      options.headers || {},
+      { Authorization: 'Bearer ' + getToken() }
+    );
+    var res = await fetch(API_BASE + path, options);
+    if (res.status === 401) {
+      handleLogout();
+      throw new Error('Session expired — please log in again.');
+    }
+    var data = await res.json();
+    if (!res.ok || data.success === false) {
+      throw new Error(data.message || 'Request failed');
+    }
+    return data;
+  }
+
+  // ---- Impact Counters ----
+  var COUNTER_LABELS = {
+    'c-students': 'Students Trained',
+    'c-placed': 'Students Placed',
+    'c-faculty': 'Faculty',
+    'c-campus': 'Training Campus',
+    'c-partners': 'Corporate Partners',
+    'c-mous': 'MOUs with Colleges'
+  };
+  var counterRecords = {}; // label -> full record from the API (has the id we need to PUT)
+
+  async function loadCounters() {
+    try {
+      var res = await apiFetch('/counters');
+      counterRecords = {};
+      (res.data || []).forEach(function (rec) { counterRecords[rec.label] = rec; });
+      Object.keys(COUNTER_LABELS).forEach(function (fieldId) {
+        var rec = counterRecords[COUNTER_LABELS[fieldId]];
+        if (!rec) return; // not seeded yet — leave the illustrative default in place
+        document.getElementById(fieldId).value = rec.value;
+        updateCounterPreview(fieldId);
+      });
+    } catch (err) {
+      console.error('Failed to load counters:', err.message);
+    }
+  }
+
+  async function saveCounters() {
+    var btn = document.getElementById('save-counters-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      var updates = Object.keys(COUNTER_LABELS).map(function (fieldId) {
+        var label = COUNTER_LABELS[fieldId];
+        var rec = counterRecords[label];
+        var value = parseInt(document.getElementById(fieldId).value, 10) || 0;
+        if (!rec) return Promise.resolve(); // no matching seeded record to update
+        return apiFetch('/counters/' + rec.id, {
+          method: 'PUT',
+          body: JSON.stringify({ value: value })
+        });
+      });
+      await Promise.all(updates);
+      showConfirm('confirm-counters');
+      loadCounters(); // refresh stored records with the saved values
+    } catch (err) {
+      alert('Could not save: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    }
+  }
+
+  // ---- Program Tracks (ACP / SDP / CCP fees) ----
+  var trackRecords = {}; // code -> full record from the API
+
+  async function loadTracks() {
+    try {
+      var res = await apiFetch('/tracks');
+      trackRecords = {};
+      (res.data || []).forEach(function (rec) { trackRecords[rec.code] = rec; });
+      ['acp', 'sdp', 'ccp'].forEach(function (code) {
+        var rec = trackRecords[code.toUpperCase()];
+        if (!rec) return;
+        document.getElementById('fee-' + code).value = rec.fee;
+        updateFeePreview(code);
+      });
+    } catch (err) {
+      console.error('Failed to load tracks:', err.message);
+    }
+  }
+
+  async function saveFees() {
+    var btn = document.getElementById('save-tracks-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      var updates = ['acp', 'sdp', 'ccp'].map(function (code) {
+        var rec = trackRecords[code.toUpperCase()];
+        var fee = parseInt(document.getElementById('fee-' + code).value.replace(/,/g, ''), 10) || 0;
+        if (!rec) return Promise.resolve();
+        return apiFetch('/tracks/' + rec.id, {
+          method: 'PUT',
+          body: JSON.stringify({ fee: fee })
+        });
+      });
+      await Promise.all(updates);
+      showConfirm('confirm-tracks');
+      loadTracks();
+    } catch (err) {
+      alert('Could not save: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    }
+  }
+
+  // ---- Hero Banners ----
+  async function loadBanners() {
+    var table = document.getElementById('banners-table');
+    try {
+      var res = await apiFetch('/banners');
+      var banners = res.data || [];
+      document.getElementById('banners-count').textContent = banners.length;
+
+      // Remove every row except the header
+      while (table.rows.length > 1) table.deleteRow(1);
+
+      if (banners.length === 0) {
+        var emptyRow = table.insertRow();
+        var emptyCell = emptyRow.insertCell();
+        emptyCell.colSpan = 5;
+        emptyCell.style.color = 'var(--ink-soft)';
+        emptyCell.textContent = 'No banners yet — add the first one below.';
+        return;
+      }
+
+      banners.forEach(function (b, i) {
+        var row = table.insertRow();
+        row.innerHTML =
+          '<td>' + (i + 1) + '</td>' +
+          '<td>' + escapeHtml(b.eyebrow || '') + '</td>' +
+          '<td style="font-weight:600;">' + escapeHtml(b.headline || '') + '</td>' +
+          '<td><span class="badge" style="background:' + (b.active ? '#E8F8EE;color:#16794D' : '#FBEEE8;color:#B5490D') + ';">' + (b.active ? 'Live' : 'Inactive') + '</span></td>' +
+          '<td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">Edit</a></td>';
+      });
+    } catch (err) {
+      console.error('Failed to load banners:', err.message);
+    }
+  }
+
+  async function addBanner() {
+    var btn = document.getElementById('save-banner-btn');
+    var eyebrow = document.getElementById('b-eyebrow').value.trim();
+    var headline = document.getElementById('b-headline').value.trim();
+    var subtext = document.getElementById('b-subtext').value.trim();
+
+    if (!headline) {
+      alert('Please enter a headline before adding the slide.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Adding…';
+    try {
+      await apiFetch('/banners', {
+        method: 'POST',
+        body: JSON.stringify({ eyebrow: eyebrow, headline: headline, subtext: subtext, active: true })
+      });
+      showConfirm('confirm-banners');
+      document.getElementById('b-eyebrow').value = '';
+      document.getElementById('b-headline').value = '';
+      document.getElementById('b-subtext').value = '';
+      updateBannerPreview();
+      loadBanners();
+    } catch (err) {
+      alert('Could not add slide: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '+ Add Slide';
+    }
+  }
+
+  // ---- Enquiries ----
+  function formatDate(iso) {
+    try {
+      return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    } catch (e) {
+      return '';
+    }
+  }
+
+  var STATUS_STYLE = {
+    new: 'background:#FBEEE8;color:#B5490D;',
+    contacted: 'background:#E8F1FC;color:var(--accent-dk);',
+    closed: 'background:#E8F8EE;color:#16794D;'
+  };
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  var enquiriesSearchTimer = null;
+  function loadEnquiries() {
+    clearTimeout(enquiriesSearchTimer);
+    enquiriesSearchTimer = setTimeout(fetchEnquiries, 250); // debounce typing in the search box
+  }
+
+  async function fetchEnquiries() {
+    var table = document.getElementById('enquiries-table');
+    var status = document.getElementById('enquiries-status-filter').value;
+    var search = document.getElementById('enquiries-search').value.trim();
+
+    var qs = [];
+    if (status && status !== 'all') qs.push('status=' + encodeURIComponent(status));
+    if (search) qs.push('search=' + encodeURIComponent(search));
+
+    try {
+      var res = await apiFetch('/enquiries' + (qs.length ? '?' + qs.join('&') : ''));
+      var rows = res.data || [];
+
+      while (table.rows.length > 1) table.deleteRow(1);
+      document.getElementById('enquiries-count-label').textContent = 'Showing ' + rows.length + ' of ' + rows.length;
+
+      if (rows.length === 0) {
+        var emptyRow = table.insertRow();
+        var emptyCell = emptyRow.insertCell();
+        emptyCell.colSpan = 7;
+        emptyCell.style.color = 'var(--ink-soft)';
+        emptyCell.textContent = 'No enquiries yet.';
+        return;
+      }
+
+      rows.forEach(function (r) {
+        var row = table.insertRow();
+        var statusStyle = STATUS_STYLE[r.status] || STATUS_STYLE.new;
+        row.innerHTML =
+          '<td style="font-weight:600;">' + escapeHtml(r.name) + '</td>' +
+          '<td>' + escapeHtml(r.email) + '<br><span style="color:var(--ink-soft);">' + escapeHtml(r.phone || '') + '</span></td>' +
+          '<td>' + escapeHtml(r.program || '&mdash;') + '</td>' +
+          '<td>' + escapeHtml(r.role || '&mdash;') + '</td>' +
+          '<td>' + formatDate(r.createdAt) + '</td>' +
+          '<td><span class="badge" style="' + statusStyle + '">' + escapeHtml((r.status || 'new').charAt(0).toUpperCase() + (r.status || 'new').slice(1)) + '</span></td>' +
+          '<td><a href="#" style="color:var(--accent);font-size:12px;font-weight:600;">View</a></td>';
+      });
+    } catch (err) {
+      console.error('Failed to load enquiries:', err.message);
+    }
+  }
+
+  // ---- Boot ----
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!getToken()) {
+      window.location.href = 'Login.html';
+      return;
+    }
+
+    var name = localStorage.getItem('ixs_admin_name') || 'Admin';
+    document.getElementById('admin-name').textContent = name;
+    document.getElementById('admin-avatar').textContent = name.charAt(0).toUpperCase();
+
+    loadCounters();
+    loadTracks();
+    loadBanners();
+    fetchEnquiries();
+  });
+</script>
+</body>
+</html>

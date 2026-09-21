@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>IXS Academy — Login</title>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,600;1,6..72,400&family=Work+Sans:wght@400;500;600;700&display=swap">
+<style>
+  body{margin:0;background:#FFFFFF;font-family:"Work Sans",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+  .serif{font-family:"Newsreader",Georgia,serif}
+  a{color:inherit;text-decoration:none}
+  input{font-family:inherit}
+  input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-weight:700;font-size:15px;padding:13px 20px;border-radius:6px;border:none;cursor:pointer;width:100%;box-sizing:border-box;}
+  .btn-primary:hover{background:var(--accent-dk)}
+  .field-label{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;display:block;}
+  .field-input{width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid var(--line-strong);border-radius:6px;font-size:14.5px;color:var(--ink);}
+</style>
+<div style="width:100%;min-height:700px;box-sizing:border-box;--accent:#0487E2;--accent-dk:#0463CA;--panel:#0463CA;--ink:#101828;--ink-soft:#57606E;--line:#E5EEF8;--line-strong:#CBE0F2;display:grid;grid-template-columns:1fr 1fr;">
+
+  <div style="background:var(--panel);display:flex;flex-direction:column;justify-content:space-between;padding:40px;position:relative;overflow:hidden;">
+    <svg viewBox="0 0 200 200" style="position:absolute;right:-50px;bottom:-60px;width:260px;height:260px;opacity:.1;" aria-hidden="true"><circle cx="100" cy="100" r="95" fill="none" stroke="#ffffff" stroke-width="10"/></svg>
+    <div style="display:flex;align-items:baseline;gap:8px;position:relative;z-index:1;">
+      <span class="serif" style="font-size:22px;font-weight:600;color:#ffffff;">IXS</span>
+      <span style="font-size:11px;letter-spacing:.16em;color:rgba(255,255,255,.8);font-weight:600;">ACADEMY</span>
+    </div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;max-width:360px;">
+      <h1 class="serif" style="margin:0;font-size:26px;font-weight:600;line-height:1.25;color:#ffffff;">Registered students &amp; employees of IXS Academy can log in here.</h1>
+      <p style="margin:0;font-size:13.5px;line-height:1.55;color:rgba(255,255,255,.78);">Access your learner dashboard, or — for staff — the content management panel used to keep the website's programs, people and stories up to date.</p>
+    </div>
+    <div style="position:relative;z-index:1;font-size:12px;color:rgba(255,255,255,.6);">&copy; 2026 IXS Academy</div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:center;padding:40px;">
+    <div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:18px;">
+      <div>
+        <h2 style="margin:0 0 6px;font-size:24px;font-weight:700;color:var(--ink);">Welcome back</h2>
+        <p style="margin:0;font-size:13.5px;color:var(--ink-soft);">Sign in with your registered email or employee ID.</p>
+      </div>
+      <div>
+        <label class="field-label" for="login-id">Email or Employee ID</label>
+        <input class="field-input" id="login-id" type="text" placeholder="you@ixsacademy.com">
+      </div>
+      <div>
+        <label class="field-label" for="login-pw">Password</label>
+        <input class="field-input" id="login-pw" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-soft);">
+          <input type="checkbox" style="width:14px;height:14px;">
+          Remember me
+        </label>
+        <a href="#" style="font-size:13px;color:var(--accent);font-weight:600;">Forgot password?</a>
+      </div>
+      <div id="login-error" style="display:none;background:#FBEEE8;color:#B5490D;font-size:12.5px;font-weight:600;padding:9px 12px;border-radius:6px;"></div>
+      <button type="button" id="login-submit" class="btn-primary" onclick="handleLogin()">Login</button>
+      <div style="text-align:center;font-size:12.5px;color:var(--ink-soft);">Need access? Contact <a href="mailto:admin@ixsacademy.com" style="color:var(--accent);font-weight:600;">admin@ixsacademy.com</a></div>
+      <a href="Main.html" style="text-align:center;font-size:12.5px;color:var(--ink-soft);text-decoration:underline;">&larr; Back to website</a>
+    </div>
+  </div>
+
+</div>
+<script src="./config.js"></script>
+<script>
+  async function handleLogin() {
+    var idField = document.getElementById('login-id');
+    var pwField = document.getElementById('login-pw');
+    var errorBox = document.getElementById('login-error');
+    var btn = document.getElementById('login-submit');
+
+    errorBox.style.display = 'none';
+
+    var email = idField.value.trim();
+    var password = pwField.value;
+
+    if (!email || !password) {
+      errorBox.textContent = 'Enter both your email and password.';
+      errorBox.style.display = '';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    try {
+      var res = await fetch(API_BASE + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+      });
+      var data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      localStorage.setItem('ixs_admin_token', data.token);
+      localStorage.setItem('ixs_admin_name', data.admin && data.admin.name ? data.admin.name : 'Admin');
+      window.location.href = 'Admin.html';
+    } catch (err) {
+      errorBox.textContent = err.message === 'Failed to fetch'
+        ? 'Could not reach the API. Is the backend running at ' + API_BASE + '?'
+        : err.message;
+      errorBox.style.display = '';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Login';
+    }
+  }
+
+  // Allow pressing Enter in either field to submit
+  document.getElementById('login-pw').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') handleLogin();
+  });
+</script>
+</body>
+</html>
